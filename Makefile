@@ -162,10 +162,30 @@ install: checkprefix nvim
 appimage:
 	bash scripts/genappimage.sh
 
+# format (use clang)
+format:
+	@clang-format -i \
+		-style="{ \
+			BasedOnStyle: Google,                          \
+			AlignConsecutiveAssignments: true,             \
+			AlignConsecutiveDeclarations: true,            \
+			ColumnLimit: 0,                                \
+			IndentWidth: 4,                                \
+			AllowShortFunctionsOnASingleLine: None,        \
+			AllowShortLoopsOnASingleLine: false,           \
+			BreakBeforeBraces: Linux,                      \
+			SortIncludes: false,                           \
+			DerivePointerAlignment: false,                 \
+			PointerAlignment: Left,                        \
+			AlignOperands: true,                           \
+		}"                                                     \
+		$(shell find ./src -name 'src/*.cpp' -o -name '*.hpp') \
+		$(shell find ./src -name 'src/*.c' -o -name '*.h')
+
 # Build an appimage with embedded update information.
 #   appimage-nightly: for nightly builds
 #   appimage-latest: for a release
 appimage-%:
 	bash scripts/genappimage.sh $*
 
-.PHONY: test clean distclean nvim libnvim cmake deps install appimage checkprefix benchmark $(FORMAT) $(LINT) $(TEST)
+.PHONY: test clean distclean nvim libnvim cmake format deps install appimage checkprefix benchmark $(FORMAT) $(LINT) $(TEST)
